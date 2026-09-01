@@ -1,0 +1,11 @@
+# SocialPulse — DSA0606 Assignment 6
+# Exact pinned versions used to generate report & dataset (verified 2026-09-01)
+# Tested on Python 3.11 — stdlib server needs no deps, these are for report generation
+python-docx==1.2.0
+matplotlib==3.11.1
+pillow==12.2.0
+
+# Optional: if you want to run the web API with FastAPI instead of stdlib server.py, uncomment:
+# fastapi==0.110.0
+# uvicorn[standard]==0.29.0
+# pydantic==2.7.0

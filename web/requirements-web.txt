@@ -1,0 +1,18 @@
+# requirements-web.txt — SocialPulse web layer (optional backend)
+# server.py (stdlib http.server) needs NO dependencies — zero-install.
+# This file is for the optional FastAPI variant if you prefer it over server.py.
+# Uncomment to use app.py (FastAPI) instead.
+
+# FastAPI + Uvicorn (alternative to stdlib server.py — adds /api/* with OpenAPI docs)
+# fastapi==0.110.*
+# uvicorn[standard]==0.29.*
+# pydantic==2.*
+
+# If you keep server.py, you need nothing:
+#   python3 web/server.py --port 8000
+# That's intentionally stdlib-only so `python3` is enough on any host.
+
+# For report/data regeneration (not web serving), see project README:
+# python-docx==1.2.0
+# matplotlib==3.8.*
+# pillow==10.*

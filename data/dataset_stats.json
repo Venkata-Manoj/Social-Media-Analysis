@@ -1,0 +1,34 @@
+{
+  "total_posts": 420,
+  "platform_dist": {
+    "Instagram": 114,
+    "Twitter": 133,
+    "Facebook": 67,
+    "YouTube": 56,
+    "LinkedIn": 50
+  },
+  "sentiment_dist": {
+    "neutral": 125,
+    "positive": 169,
+    "negative": 126
+  },
+  "topic_dist": {
+    "Customer Service": 57,
+    "Tech Review": 46,
+    "Entertainment": 52,
+    "Sports": 53,
+    "Lifestyle": 45,
+    "Product Launch": 43,
+    "News": 43,
+    "Marketing Campaign": 81
+  },
+  "user_type_dist": {
+    "Regular": 225,
+    "Brand": 100,
+    "Verified": 28,
+    "Influencer": 67
+  },
+  "total_engagement": 621552,
+  "avg_sentiment": 0.057,
+  "date_range": "2026-03-01 to 2026-08-31"
+}

@@ -1,0 +1,8 @@
+# robots.txt — SocialPulse DSA0606
+User-agent: *
+Allow: /
+Allow: /assets/
+Allow: /data/
+Disallow: /report/
+Disallow: /web/server.py
+Sitemap: sitemap.xml

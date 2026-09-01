@@ -1,0 +1,6 @@
+# SocialPulse web layer — pinned for report/data regeneration
+# For stdlib server.py, no install needed: python3 web/server.py
+# This file is the canonical pinned set (same as ../../requirements.txt) for `pip install -r web/requirements.txt`
+python-docx==1.2.0
+matplotlib==3.11.1
+pillow==12.2.0

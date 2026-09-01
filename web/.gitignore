@@ -1,0 +1,55 @@
+# web/.gitignore — SocialPulse web layer
+# Keep canonical data/report intact; ignore only web-local build junk
+
+# Node
+node_modules/
+dist/
+.web/
+.parcel-cache/
+.vite/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Vercel / Netlify
+.vercel
+.netlify/
+out/
+.build/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local overrides — keep seo.json but ignore local deploys
+.env.local
+.env.development.local
+.env.production.local
+
+# Keep public assets fallback but ignore generated copies if huge
+# (uncomment if you don't want dist copies in git)
+# public/data/
+# public/assets/
+
+# Logs
+logs/
+*.out

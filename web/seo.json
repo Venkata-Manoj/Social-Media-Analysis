@@ -1,0 +1,129 @@
+{
+  "site": {
+    "title": "SocialPulse — Sentiment & Engagement Analytics | DSA0606 Assignment 6",
+    "titleTemplate": "%s | SocialPulse",
+    "description": "Interactive static analytics for 420 synthetic social posts (Mar–Aug 2026): sentiment classification, engagement drivers, 8 Chart.js visualizations, and live filtering. Synthetic dataset (seed=42) — no backend, double-click to run.",
+    "canonical": "https://socialpulse-dsa0606.example.com/",
+    "baseUrl": "https://socialpulse-dsa0606.example.com/",
+    "language": "en",
+    "locale": "en_US",
+    "themeColor": "#2563eb",
+    "backgroundColor": "#f6f7fb",
+    "author": "SocialPulse — DSA0606",
+    "publisher": "DSA0606 Assignment 6",
+    "copyright": "© 2026 SocialPulse • Academic use • Synthetic data seed=42"
+  },
+  "keywords": [
+    "sentiment analysis",
+    "social media analytics",
+    "engagement analytics",
+    "DSA0606",
+    "Chart.js",
+    "unstructured data",
+    "semi-structured data",
+    "visualization",
+    "static site",
+    "socialpulse"
+  ],
+  "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+  "googlebot": "index, follow",
+  "openGraph": {
+    "type": "website",
+    "locale": "en_US",
+    "siteName": "SocialPulse",
+    "title": "SocialPulse — Sentiment & Engagement Analytics",
+    "description": "420 posts • 8 interactive charts • instant filtering • text playground. Demonstrates handling unstructured & semi-structured social data (DSA0606 Assignment 6).",
+    "url": "https://socialpulse-dsa0606.example.com/",
+    "images": [
+      {
+        "url": "assets/fig1_sentiment.png",
+        "width": 1200,
+        "height": 630,
+        "alt": "SocialPulse sentiment distribution — 40% positive / 30% neutral / 30% negative",
+        "type": "image/png"
+      },
+      {
+        "url": "assets/fig3_timeline.png",
+        "width": 1600,
+        "height": 900,
+        "alt": "Engagement over time — daily totals with campaign spikes Apr 15, May 20, Jun 10, Jul 18",
+        "type": "image/png"
+      }
+    ]
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "site": "@socialpulse",
+    "creator": "@socialpulse",
+    "title": "SocialPulse — Sentiment & Engagement Analytics",
+    "description": "420 posts • 8 charts • live filters. Static, single-file, DSA0606 Assignment 6.",
+    "image": "assets/fig1_sentiment.png",
+    "imageAlt": "SocialPulse dashboard preview"
+  },
+  "jsonLd": {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SocialPulse",
+    "alternateName": "SocialPulse DSA0606",
+    "description": "Static sentiment & engagement analytics for 420 social posts. 8 Chart.js visualizations, live filtering, text analysis playground. Academic submission DSA0606 Assignment 6.",
+    "applicationCategory": "DataVisualization",
+    "operatingSystem": "Any — static HTML, no install",
+    "browserRequirements": "Requires JavaScript; Chart.js 4.4.1 via CDN",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "DSA0606 Assignment 6"
+    },
+    "datePublished": "2026-03-01",
+    "dateModified": "2026-09-01",
+    "inLanguage": "en",
+    "keywords": "sentiment, engagement, social media, visualization, Chart.js, DSA0606",
+    "isAccessibleForFree": true,
+    "screenshot": "assets/fig3_timeline.png"
+  },
+  "jsonLdDataset": {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "SocialPulse Synthetic Social Media Dataset (420 posts)",
+    "description": "Synthetic 420-post social dataset spanning 2026-03-01 to 2026-08-31. 20 fields: text, platform, sentiment_label/score, likes/shares/comments/views/engagement, hashtags, topic, user_type. Deterministic seed=42.",
+    "keywords": ["social media", "sentiment", "engagement", "synthetic dataset", "DSA0606"],
+    "creator": { "@type": "Organization", "name": "DSA0606" },
+    "temporalCoverage": "2026-03-01/2026-08-31",
+    "spatialCoverage": "N/A — synthetic",
+    "distribution": [
+      { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "data/social_media_dataset.json" },
+      { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "data/social_media_dataset.csv" }
+    ],
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "isAccessibleForFree": true
+  },
+  "metaTagsPlan": {
+    "note": "All paths are relative so the app works on file:// and https://. Canonical URLs are relative-agnostic; hosts should set the correct absolute domain in hosting configs.",
+    "requiredInHead": [
+      "charset UTF-8",
+      "viewport width=device-width, initial-scale=1.0",
+      "title (see site.title)",
+      "meta name=description",
+      "link rel=canonical",
+      "meta name=theme-color",
+      "meta name=color-scheme",
+      "link rel=icon (see public/favicon.svg)",
+      "link rel=apple-touch-icon",
+      "link rel=manifest (public/site.webmanifest)",
+      "og:* and twitter:* tags",
+      "script type=application/ld+json (jsonLd + jsonLdDataset)"
+    ],
+    "pwa": {
+      "manifest": "public/site.webmanifest",
+      "icons": [
+        { "src": "public/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "public/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+      ]
+    },
+    "performance": "preconnect cdn.jsdelivr.net and fonts.googleapis.com; Chart.js via CDN with local fallback documented in README"
+  }
+}

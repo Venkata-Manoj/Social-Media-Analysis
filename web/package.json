@@ -1,0 +1,35 @@
+{
+  "name": "socialpulse-web",
+  "version": "1.0.0",
+  "description": "SocialPulse DSA0606 — production web layer (static + optional Python API). Zero-build static hosting; canonical app remains ../index.html single-file fallback.",
+  "private": true,
+  "type": "module",
+  "keywords": ["dsa0606", "sentiment", "engagement", "visualization", "chart.js", "static"],
+  "author": "SocialPulse • DSA0606 Assignment 6",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "vite --host --port 5173 --open",
+    "serve": "serve --listen 4173 --single --cors ..",
+    "start": "serve --listen 3000 --single --cors .",
+    "sync": "node scripts/sync.mjs",
+    "build": "npm run sync",
+    "preview": "npx serve dist --listen 4173 --single --cors",
+    "py:serve": "python3 server.py --port 8000",
+    "py:serve:open": "python3 server.py --port 8000 --open",
+    "seo:apply": "node scripts/apply-seo.mjs",
+    "check": "node -e \"console.log('canonical:', require('fs').existsSync('../index.html') ? 'OK ../index.html ('+require('fs').statSync('../index.html').size+' bytes)' : 'MISSING')\"",
+    "validate": "npm run check && ls -lh ../index.html ../data/*.json ../assets/*.png 2>/dev/null | head -n 20"
+  },
+  "devDependencies": {
+    "serve": "^14.2.1",
+    "vite": "^5.4.8"
+  },
+  "dependencies": {},
+  "serve": {
+    "public": "..",
+    "cleanUrls": true
+  }
+}

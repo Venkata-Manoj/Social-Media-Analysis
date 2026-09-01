@@ -1,0 +1,88 @@
+<!--- ============================================================
+  SEO_HEAD.html — SocialPulse DSA0606
+  Drop-in <head> snippet (relative paths) — paste BELOW <title>
+  or use scripts/apply-seo.mjs to auto-inject. All paths stay
+  relative so file:// still works (no absolute / prefix).
+  Canonical URL: replace example.com with your deployed domain.
+  ============================================================ -->
+
+<!-- Primary -->
+<meta name="description" content="Interactive static analytics for 420 synthetic social posts (Mar–Aug 2026): sentiment classification, engagement drivers, 8 Chart.js visualizations, live filtering. Synthetic dataset seed=42 — no backend, double-click to run."/>
+<meta name="keywords" content="sentiment analysis, social media analytics, engagement analytics, DSA0606, Chart.js, unstructured data, semi-structured data, visualization, static site, socialpulse"/>
+<meta name="author" content="SocialPulse — DSA0606 Assignment 6"/>
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+<meta name="theme-color" content="#2563eb"/>
+<meta name="color-scheme" content="light"/>
+<link rel="canonical" href="https://socialpulse-dsa0606.example.com/"/>
+
+<!-- Icons / PWA (relative — safe for file://) -->
+<link rel="icon" href="web/public/favicon.svg" type="image/svg+xml"/>
+<link rel="apple-touch-icon" href="web/public/icons/icon-192.png"/>
+<link rel="manifest" href="web/public/site.webmanifest"/>
+
+<!-- Open Graph -->
+<meta property="og:type" content="website"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:site_name" content="SocialPulse"/>
+<meta property="og:title" content="SocialPulse — Sentiment & Engagement Analytics"/>
+<meta property="og:description" content="420 posts • 8 interactive charts • instant filtering • text playground. Demonstrates handling unstructured & semi-structured social data (DSA0606 Assignment 6)."/>
+<meta property="og:url" content="https://socialpulse-dsa0606.example.com/"/>
+<meta property="og:image" content="assets/fig1_sentiment.png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:image:alt" content="SocialPulse sentiment distribution"/>
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:site" content="@socialpulse"/>
+<meta name="twitter:title" content="SocialPulse — Sentiment & Engagement Analytics"/>
+<meta name="twitter:description" content="420 posts • 8 charts • live filters. Static, single-file, DSA0606 Assignment 6."/>
+<meta name="twitter:image" content="assets/fig1_sentiment.png"/>
+
+<!-- JSON-LD: WebApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "SocialPulse",
+  "description": "Static sentiment & engagement analytics for 420 social posts. 8 Chart.js visualizations, live filtering, text analysis playground. Academic submission DSA0606 Assignment 6.",
+  "applicationCategory": "DataVisualization",
+  "operatingSystem": "Any — static HTML, no install",
+  "isAccessibleForFree": true,
+  "author": { "@type": "Organization", "name": "DSA0606 Assignment 6" },
+  "screenshot": "assets/fig3_timeline.png"
+}
+</script>
+<!-- JSON-LD: Dataset -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "SocialPulse Synthetic Social Media Dataset (420 posts)",
+  "description": "Synthetic 420-post social dataset spanning 2026-03-01 to 2026-08-31. Deterministic seed=42. 20 fields incl. text, platform, sentiment, engagement.",
+  "temporalCoverage": "2026-03-01/2026-08-31",
+  "distribution": [
+    { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "data/social_media_dataset.json" },
+    { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "data/social_media_dataset.csv" }
+  ],
+  "license": "https://creativecommons.org/licenses/by/4.0/"
+}
+</script>
+
+<!-- Optional runtime SEO loader (file:// safe: fetches ./web/seo.json if present) -->
+<script>
+(function(){
+  // Only runs if seo.json is reachable (http/https). No-op on file:// without server.
+  var u = 'web/seo.json';
+  try {
+    fetch(u).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
+      if(!j || !j.site) return;
+      // ensure canonical points to current origin when deployed
+      var can = document.querySelector('link[rel=canonical]');
+      if(can && location.protocol.startsWith('http')) {
+        can.href = location.origin + location.pathname.replace(/index\.html$/,'');
+      }
+    }).catch(function(){});
+  } catch(e) {}
+})();
+</script>

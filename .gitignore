@@ -1,0 +1,85 @@
+# SocialPulse — DSA0606 root .gitignore
+# Keep canonical data/report intact; ignore only build & env junk
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+.env
+*.pyc
+*.pyo
+*.pyd
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Node
+node_modules/
+dist/
+.web/
+.parcel-cache/
+.vite/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.next/
+out/
+.build/
+
+# Vercel / Netlify
+.vercel
+.netlify/
+.web/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+Icon?
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-*
+
+# Report build artifacts (keep final docx, ignore temp)
+report/*.tmp
+report/~$*.docx
+~$*.docx
+
+# Cache
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Local overrides
+.env.local
+.env.development.local
+.env.production.local
+.env.*.local
+
+# Logs
+logs/
+*.out
+*.err
+
+# Keep icons and assets — but ignore generated huge copies if they blow up
+# Uncomment if you don't want to track generated icons/dist:
+# web/dist/
+# web/public/data/
+# web/public/assets/
