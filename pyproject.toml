@@ -1,0 +1,36 @@
+[project]
+name = "socialpulse-dsa0606"
+version = "1.0.0"
+description = "SocialPulse — DSA0606 Assignment 6: Social Media Sentiment & Engagement Analytics (420 posts, 8 charts, static app + report)"
+license = { text = "MIT" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+]
+ignore = [
+    "E402",  # module level import not at top — intentional for report generation (docx import after chart code)
+    "E501",  # line too long — visualisation code
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.ruff.lint.per-file-ignores]
+"report/generate_report.py" = ["E741", "F841"]
+"thing/*" = ["E", "W", "F", "I"]
+"web/server.py" = ["F841", "E722"]
+"data/generate_dataset.py" = ["F841"]

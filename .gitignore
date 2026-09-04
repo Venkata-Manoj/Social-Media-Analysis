@@ -67,6 +67,10 @@ htmlcov/
 .dmypy.json
 dmypy.json
 
+# Assignment hygiene — remove leaked draft artifacts (see thing/ removal, 2026-09-04)
+thing/
+*.tmp.docx
+
 # Local overrides
 .env.local
 .env.development.local
@@ -83,3 +87,4 @@ logs/
 # web/dist/
 # web/public/data/
 # web/public/assets/
+start.txt
