@@ -40,6 +40,7 @@ ETag note: weak ETag W/"len-mtime" for files, strong hash for API JSON. Supports
 """
 
 from __future__ import annotations
+
 import argparse
 import csv
 import datetime
@@ -48,7 +49,6 @@ import hashlib
 import io
 import json
 import mimetypes
-import os
 import pathlib
 import sys
 import threading
@@ -64,6 +64,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 THIS_DIR = pathlib.Path(__file__).resolve().parent
 PROJECT_ROOT = THIS_DIR.parent  # /mnt/e/DSA0606-asmt  (contains index.html, data/, assets/)
 CANDIDATE_ROOTS = [PROJECT_ROOT, pathlib.Path.cwd(), THIS_DIR]
+
 
 def resolve_root(cli_root: str | None) -> pathlib.Path:
     if cli_root:
@@ -81,6 +82,7 @@ def resolve_root(cli_root: str | None) -> pathlib.Path:
         if (cand / "data" / "social_media_dataset.json").exists():
             return cand.resolve()
     return PROJECT_ROOT.resolve()
+
 
 # Load JSON once
 DATA_PATH = PROJECT_ROOT / "data" / "social_media_dataset.json"
@@ -105,7 +107,7 @@ except Exception:
 
 # For fast filtering: precompute lowercased haystack
 for r in POSTS:
-    r["_hay"] = f"{r.get('text','')} {r.get('hashtags_str','')} {r.get('topic','')} {r.get('platform','')}".lower()
+    r["_hay"] = f"{r.get('text', '')} {r.get('hashtags_str', '')} {r.get('topic', '')} {r.get('platform', '')}".lower()
 
 # ---------------------------------------------------------------------------
 # Rate limiting (in-memory, per-IP sliding window) — hint headers
@@ -115,11 +117,13 @@ _RATE_WINDOW = 60.0  # seconds
 _rate_store: dict[str, list[float]] = {}
 _rate_lock = threading.Lock()
 
+
 def _get_client_ip(handler) -> str:
     try:
         return handler.client_address[0]
     except Exception:
         return "unknown"
+
 
 def _check_rate_limit(ip: str) -> tuple[bool, int, int]:
     """Return (allowed, remaining, reset_seconds)."""
@@ -144,6 +148,7 @@ def _check_rate_limit(ip: str) -> tuple[bool, int, int]:
             reset = int(_RATE_WINDOW)
         return allowed, remaining, reset
 
+
 def _should_gzip(handler, data_len: int) -> bool:
     """gzip if client accepts it and payload > 512 bytes."""
     if data_len < 512:
@@ -151,13 +156,16 @@ def _should_gzip(handler, data_len: int) -> bool:
     enc = handler.headers.get("Accept-Encoding", "")
     return "gzip" in enc.lower()
 
+
 def _gzip_bytes(data: bytes) -> bytes:
     return gzip.compress(data, compresslevel=6)
+
 
 def _etag_for_bytes(data: bytes) -> str:
     # strong ETag using md5, quoted
     h = hashlib.md5(data).hexdigest()[:16]
     return f'"{h}-{len(data)}"'
+
 
 def _etag_weak_for_file(filepath: pathlib.Path, size: int) -> str:
     try:
@@ -166,21 +174,46 @@ def _etag_weak_for_file(filepath: pathlib.Path, size: int) -> str:
         mtime = int(time.time())
     return f'W/"{size}-{mtime}"'
 
+
 # ---------------------------------------------------------------------------
 # Helpers — filtering matching the JS in index.html
 # ---------------------------------------------------------------------------
-VALID_PLATFORMS = {"Twitter","Instagram","Facebook","LinkedIn","YouTube"}
-VALID_SENTIMENTS = {"positive","neutral","negative"}
-VALID_TOPICS = {"Product Launch","Customer Service","Marketing Campaign","Tech Review","Lifestyle","Sports","Entertainment","News"}
-VALID_USER_TYPES = {"Regular","Influencer","Brand","Verified"}
-SORTABLE = {"post_id","platform","timestamp","date","topic","sentiment_label","sentiment_score","engagement","likes","comments","shares","views","hour"}
+VALID_PLATFORMS = {"Twitter", "Instagram", "Facebook", "LinkedIn", "YouTube"}
+VALID_SENTIMENTS = {"positive", "neutral", "negative"}
+VALID_TOPICS = {
+    "Product Launch",
+    "Customer Service",
+    "Marketing Campaign",
+    "Tech Review",
+    "Lifestyle",
+    "Sports",
+    "Entertainment",
+    "News",
+}
+VALID_USER_TYPES = {"Regular", "Influencer", "Brand", "Verified"}
+SORTABLE = {
+    "post_id",
+    "platform",
+    "timestamp",
+    "date",
+    "topic",
+    "sentiment_label",
+    "sentiment_score",
+    "engagement",
+    "likes",
+    "comments",
+    "shares",
+    "views",
+    "hour",
+}
+
 
 def filter_posts(qs: dict) -> list[dict]:
     """qs is parse_qs result (keys -> list[str]). Returns filtered shallow copies without _hay."""
-    platform = (qs.get("platform", ["all"])[0] or "all")
-    sentiment = (qs.get("sentiment", qs.get("sentiment_label", ["all"]))[0] or "all")
-    topic = (qs.get("topic", ["all"])[0] or "all")
-    user_type = (qs.get("user_type", qs.get("user", ["all"]))[0] or "all")
+    platform = qs.get("platform", ["all"])[0] or "all"
+    sentiment = qs.get("sentiment", qs.get("sentiment_label", ["all"]))[0] or "all"
+    topic = qs.get("topic", ["all"])[0] or "all"
+    user_type = qs.get("user_type", qs.get("user", ["all"]))[0] or "all"
     start = (qs.get("start", qs.get("date_start", [""]))[0] or "").strip()
     end = (qs.get("end", qs.get("date_end", [""]))[0] or "").strip()
     search = (qs.get("search", qs.get("q", [""]))[0] or "").strip().lower()
@@ -194,11 +227,11 @@ def filter_posts(qs: dict) -> list[dict]:
             return False
         if user_type != "all" and r.get("user_type") != user_type:
             return False
-        if start and r.get("date","") < start:
+        if start and r.get("date", "") < start:
             return False
-        if end and r.get("date","") > end:
+        if end and r.get("date", "") > end:
             return False
-        if search and search not in r.get("_hay",""):
+        if search and search not in r.get("_hay", ""):
             return False
         return True
 
@@ -214,9 +247,19 @@ def filter_posts(qs: dict) -> list[dict]:
     # numeric keys
     def keyfn(r):
         v = r.get(sort_key)
-        if sort_key in {"sentiment_score","engagement","likes","comments","shares","views","hour"}:
-            try: return float(v)
-            except: return 0
+        if sort_key in {
+            "sentiment_score",
+            "engagement",
+            "likes",
+            "comments",
+            "shares",
+            "views",
+            "hour",
+        }:
+            try:
+                return float(v)
+            except:
+                return 0
         return v or ""
 
     try:
@@ -226,20 +269,24 @@ def filter_posts(qs: dict) -> list[dict]:
 
     return out
 
+
 def paginate(rows, qs):
     try:
         limit = int((qs.get("limit", ["50"])[0] or "50"))
-    except: limit = 50
+    except:
+        limit = 50
     try:
         offset = int((qs.get("offset", ["0"])[0] or "0"))
-    except: offset = 0
+    except:
+        offset = 0
     limit = max(1, min(limit, 420))
     offset = max(0, offset)
     total = len(rows)
-    sliced = rows[offset: offset+limit]
+    sliced = rows[offset : offset + limit]
     # strip internal _hay before returning
-    clean = [{k:v for k,v in r.items() if k != "_hay"} for r in sliced]
+    clean = [{k: v for k, v in r.items() if k != "_hay"} for r in sliced]
     return total, limit, offset, clean
+
 
 # ---------------------------------------------------------------------------
 # HTTP handler
@@ -253,7 +300,7 @@ class Handler(SimpleHTTPRequestHandler):
         msg = fmt % args
         code = args[1] if len(args) > 1 else "-"
         # no extra noise for 404 fallback
-        sys.stderr.write(f"{self.log_date_time_string()} \"{msg}\" \n")
+        sys.stderr.write(f'{self.log_date_time_string()} "{msg}" \n')
 
     def end_headers(self):
         # Security headers for every response
@@ -267,8 +314,14 @@ class Handler(SimpleHTTPRequestHandler):
         # For credentialed requests, browsers disallow * with null, but we are not credentialed (no cookies), so * is safe and intentional for offline-first.
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, If-None-Match, If-Modified-Since")
-        self.send_header("Access-Control-Expose-Headers", "ETag, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, Content-Length, Content-Encoding")
+        self.send_header(
+            "Access-Control-Allow-Headers",
+            "Content-Type, Authorization, X-Requested-With, If-None-Match, If-Modified-Since",
+        )
+        self.send_header(
+            "Access-Control-Expose-Headers",
+            "ETag, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, Content-Length, Content-Encoding",
+        )
         # Vary for gzip + CORS
         self.send_header("Vary", "Accept-Encoding, Origin")
         super().end_headers()
@@ -295,7 +348,12 @@ class Handler(SimpleHTTPRequestHandler):
         self._rl_allowed = allowed
         if not allowed:
             # 429 Too Many Requests with RateLimit headers
-            body = {"error": "rate limit exceeded", "limit": _RATE_LIMIT, "window": f"{int(_RATE_WINDOW)}s", "retry_after": reset}
+            body = {
+                "error": "rate limit exceeded",
+                "limit": _RATE_LIMIT,
+                "window": f"{int(_RATE_WINDOW)}s",
+                "retry_after": reset,
+            }
             data = json.dumps(body, ensure_ascii=False, indent=2).encode("utf-8")
             etag = _etag_for_bytes(data)
             # optionally gzip 429 body too
@@ -441,7 +499,19 @@ class Handler(SimpleHTTPRequestHandler):
 
         # Gzip handling — compress if client accepts and mime is textual/compressible
         # Only gzip json/csv/js/css/html/svg, not png (already compressed)
-        compressible = suffix in (".json", ".csv", ".js", ".mjs", ".css", ".html", ".htm", ".svg", ".txt", ".webmanifest", ".xml")
+        compressible = suffix in (
+            ".json",
+            ".csv",
+            ".js",
+            ".mjs",
+            ".css",
+            ".html",
+            ".htm",
+            ".svg",
+            ".txt",
+            ".webmanifest",
+            ".xml",
+        )
         use_gzip = compressible and _should_gzip(self, len(data))
         out_data = data
         if use_gzip:
@@ -482,7 +552,13 @@ class Handler(SimpleHTTPRequestHandler):
                 "uptime": "n/a (stdlib http.server)",
                 "time": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "root": str(self.root),
-                "endpoints": ["/api/posts", "/api/stats", "/api/seo", "/api/health", "/api/hashtags"]
+                "endpoints": [
+                    "/api/posts",
+                    "/api/stats",
+                    "/api/seo",
+                    "/api/health",
+                    "/api/hashtags",
+                ],
             }
             self.send_json(body, head_only)
             return
@@ -494,12 +570,16 @@ class Handler(SimpleHTTPRequestHandler):
             return
         if path == "/api/hashtags":
             from collections import Counter
+
             c = Counter()
             for r in POSTS:
                 for h in r.get("hashtags", []):
                     c[h] += 1
             top = c.most_common(20)
-            self.send_json({"count": len(c), "top": [{"tag": k, "count": v} for k, v in top]}, head_only)
+            self.send_json(
+                {"count": len(c), "top": [{"tag": k, "count": v} for k, v in top]},
+                head_only,
+            )
             return
         if path.startswith("/api/posts"):
             # also handle /api/posts.csv ?format=csv
@@ -544,7 +624,10 @@ class Handler(SimpleHTTPRequestHandler):
                     data = _gzip_bytes(data)
                 self.send_response(HTTPStatus.OK)
                 self.send_header("Content-Type", "text/csv; charset=utf-8")
-                self.send_header("Content-Disposition", f'attachment; filename="socialpulse_filtered_{total}_{datetime.date.today().isoformat()}.csv"')
+                self.send_header(
+                    "Content-Disposition",
+                    f'attachment; filename="socialpulse_filtered_{total}_{datetime.date.today().isoformat()}.csv"',
+                )
                 self.send_header("Content-Length", str(len(data)))
                 self.send_header("Cache-Control", "no-store")
                 self.send_header("ETag", etag)
@@ -571,13 +654,27 @@ class Handler(SimpleHTTPRequestHandler):
                 "filters": filters,
                 "sort": (qs.get("sort", ["timestamp"])[0] if "sort" in qs else "timestamp"),
                 "order": (qs.get("order", ["desc"])[0] if "order" in qs else "desc"),
-                "data": sliced
+                "data": sliced,
             }
             self.send_json(body, head_only)
             return
 
         # unknown api
-        self.send_json({"error": "not found", "path": path, "available": ["/api/posts","/api/stats","/api/seo","/api/health","/api/hashtags"]}, head_only, status=404)
+        self.send_json(
+            {
+                "error": "not found",
+                "path": path,
+                "available": [
+                    "/api/posts",
+                    "/api/stats",
+                    "/api/seo",
+                    "/api/health",
+                    "/api/hashtags",
+                ],
+            },
+            head_only,
+            status=404,
+        )
 
     def send_json(self, obj, head_only=False, status=200):
         data = json.dumps(obj, ensure_ascii=False, indent=2).encode("utf-8")
@@ -587,7 +684,10 @@ class Handler(SimpleHTTPRequestHandler):
         if inm and inm.strip() == etag and status == 200:
             self.send_response(HTTPStatus.NOT_MODIFIED)
             self.send_header("ETag", etag)
-            self.send_header("Cache-Control", "no-store" if status != 200 else "public, max-age=60, must-revalidate")
+            self.send_header(
+                "Cache-Control",
+                "no-store" if status != 200 else "public, max-age=60, must-revalidate",
+            )
             if hasattr(self, "_rl_remaining"):
                 self.send_header("X-RateLimit-Limit", str(_RATE_LIMIT))
                 self.send_header("X-RateLimit-Remaining", str(self._rl_remaining))
@@ -601,7 +701,10 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(out)))
-        self.send_header("Cache-Control", "no-store" if status != 200 else "public, max-age=60, must-revalidate")
+        self.send_header(
+            "Cache-Control",
+            "no-store" if status != 200 else "public, max-age=60, must-revalidate",
+        )
         self.send_header("ETag", etag)
         if use_gzip:
             self.send_header("Content-Encoding", "gzip")
@@ -616,9 +719,16 @@ class Handler(SimpleHTTPRequestHandler):
 
 def main():
     parser = argparse.ArgumentParser(description="SocialPulse static + API server (stdlib, zero-deps)")
-    parser.add_argument("--host", default="127.0.0.1", help="bind host (default: 127.0.0.1, use 0.0.0.0 for LAN)")
+    parser.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="bind host (default: 127.0.0.1, use 0.0.0.0 for LAN)",
+    )
     parser.add_argument("--port", "-p", type=int, default=8000, help="port (default: 8000)")
-    parser.add_argument("--root", help="project root containing index.html (default: auto-detect parent of web/)")
+    parser.add_argument(
+        "--root",
+        help="project root containing index.html (default: auto-detect parent of web/)",
+    )
     parser.add_argument("--open", action="store_true", help="open browser after start")
     args = parser.parse_args()
 
@@ -631,7 +741,11 @@ def main():
     if idx.exists():
         print(f"  canonical: {idx} ({idx.stat().st_size:,} bytes) ✓", flush=True)
     else:
-        print(f"  [warn] index.html not found at {idx} — fallback will 404", file=sys.stderr, flush=True)
+        print(
+            f"  [warn] index.html not found at {idx} — fallback will 404",
+            file=sys.stderr,
+            flush=True,
+        )
 
     data_file = root / "data" / "social_media_dataset.json"
     if data_file.exists():
@@ -645,6 +759,7 @@ def main():
         print(f"  {sub:10s}: {p} {status}", flush=True)
 
     addr = (args.host, args.port)
+
     class ReuseServer(ThreadingHTTPServer):
         allow_reuse_address = True
         daemon_threads = True
@@ -668,14 +783,23 @@ def main():
     url = f"http://{args.host}:{args.port}/"
     display_url = f"http://127.0.0.1:{args.port}/" if args.host == "0.0.0.0" else url
     print(f"\nServing on {url}  (display: {display_url})", flush=True)
-    print(f"  /                -> index.html (SPA fallback)", flush=True)
-    print(f"  /api/posts       -> filtered JSON (try: /api/posts?platform=Instagram&limit=3)", flush=True)
-    print(f"  /api/stats       -> dataset_stats.json", flush=True)
-    print(f"  /api/seo         -> seo.json", flush=True)
-    print(f"  /api/health      -> healthcheck", flush=True)
-    print(f"  Features: ETag (304), gzip (Accept-Encoding), RateLimit 60/min, CORS * (file:// safe), Vary headers", flush=True)
-    print(f"  Static fallback: file:// double-click still works (no server required) — server is optional", flush=True)
-    print(f"  Ctrl+C to stop\n", flush=True)
+    print("  /                -> index.html (SPA fallback)", flush=True)
+    print(
+        "  /api/posts       -> filtered JSON (try: /api/posts?platform=Instagram&limit=3)",
+        flush=True,
+    )
+    print("  /api/stats       -> dataset_stats.json", flush=True)
+    print("  /api/seo         -> seo.json", flush=True)
+    print("  /api/health      -> healthcheck", flush=True)
+    print(
+        "  Features: ETag (304), gzip (Accept-Encoding), RateLimit 60/min, CORS * (file:// safe), Vary headers",
+        flush=True,
+    )
+    print(
+        "  Static fallback: file:// double-click still works (no server required) — server is optional",
+        flush=True,
+    )
+    print("  Ctrl+C to stop\n", flush=True)
 
     if args.open:
         try:
@@ -690,6 +814,7 @@ def main():
         print("\nShutting down...", flush=True)
         httpd.shutdown()
         sys.exit(0)
+
 
 if __name__ == "__main__":
     main()
